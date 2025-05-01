@@ -1,3 +1,20 @@
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import rough from "roughjs";
+import boardContext from "../../store/board-context";
+import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
+import toolboxContext from "../../store/toolbox-context";
+import socket from "../../utils/socket";
+
+import classes from "./index.module.css";
+
+import {
+  getSvgPathFromStroke,
+} from "../../utils/element";
+import getStroke from "perfect-freehand";
+import axios from "axios";
+
+
+
 function Board({ id }) {
     const canvasRef = useRef();
     const textAreaRef = useRef();
