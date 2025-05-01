@@ -148,4 +148,62 @@ function Board({ id }) {
       };
     }, [elements]);
 
+
+    useEffect(() => {
+        const textarea = textAreaRef.current;
+        if (toolActionType === TOOL_ACTION_TYPES.WRITING) {
+          setTimeout(() => {
+            textarea.focus();
+          }, 0);
+        }
+      }, [toolActionType]);
+    
+      // console.log("Elements ",elements);
+    
+      const handleMouseDown = (event) => {
+        if (!isAuthorized) return;
+        boardMouseDownHandler(event, toolboxState);
+      };
+    
+      const handleMouseMove = (event) => {
+        if (!isAuthorized) return;
+        boardMouseMoveHandler(event);
+        socket.emit("drawingUpdate", { canvasId: id, elements });
+      };
+    
+      const handleMouseUp = () => {
+        if (!isAuthorized) return;
+        boardMouseUpHandler();
+        socket.emit("drawingUpdate", { canvasId: id, elements });
+      };
+    
+      return (
+        <>
+          {toolActionType === TOOL_ACTION_TYPES.WRITING && (
+            <textarea
+              type="text"
+              ref={textAreaRef}
+              className={classes.textElementBox}
+              style={{
+                top: elements[elements.length - 1].y1,
+                left: elements[elements.length - 1].x1,
+                fontSize: `${elements[elements.length - 1]?.size}px`,
+                color: elements[elements.length - 1]?.stroke,
+              }}
+              onBlur={(event) => textAreaBlurHandler(event.target.value)}
+            />
+          )}
+          <canvas
+            ref={canvasRef}
+            id="canvas"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+          />
+        </>
+      );
+    }
+    
+    export default Board;
+
     
